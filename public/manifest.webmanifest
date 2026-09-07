@@ -1,13 +1,13 @@
 {
-  "name": "Kuş Köyü Sudoku",
-  "short_name": "Kuş Sudoku",
-  "description": "Kuşlarla sakin ve erişilebilir Sudoku deneyimi.",
+  "name": "Kuş Köyü: Denge",
+  "short_name": "Kuş Köyü",
+  "description": "Kuşları doğru yuvalara yerleştir; yolları, bahçeleri ve ilişki işaretlerini birlikte çöz.",
   "lang": "tr",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#f5efe2",
-  "theme_color": "#f5efe2",
+  "background_color": "#f6f0df",
+  "theme_color": "#f6f0df",
   "orientation": "portrait-primary",
   "icons": [
     {

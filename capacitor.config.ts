@@ -2,14 +2,14 @@ import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
   appId: 'com.gokhanagingil.kuskoyusudoku',
-  appName: 'Kuş Köyü Sudoku',
+  appName: 'Kuş Köyü: Denge',
   webDir: 'dist',
-  backgroundColor: '#edf1e7',
+  backgroundColor: '#f6f0df',
   server: {
     androidScheme: 'https',
   },
   android: {
-    backgroundColor: '#edf1e7',
+    backgroundColor: '#f6f0df',
   },
 };
 

@@ -1,42 +1,75 @@
-# Kuş Köyü Sudoku
+# Kuş Köyü: Denge
 
-Kuş Köyü Sudoku, Belgin uygulamasındaki sevilen Kuş Köyü duygusunu koruyan; yalnızca Sudoku deneyimine odaklanan, çevrimdışı ve 60+ yaş erişilebilirliği öncelikli bir mobil oyundur.
+> `sudoku` depo adı tarihsel bir çalışma adıdır. Oyuncuya sunulan ürün **Kuş Köyü: Denge**'dir.
 
-## Ürün vaadi
+Kuş Köyü: Denge, Belgin'de sevilen sıcak Kuş Köyü hissini koruyan; yatay/dikey yol ve bahçe benzersizliğini komşuluk, sıralama ve toplam ilişkileriyle genişleten bağımsız bir mobil mantık oyunudur. Birincil hedef 60+ yaş grubudur.
 
-- Tek oyun, net amaç: satır, sütun ve bölge Sudoku'su.
-- Beş puanla açılan kademe: Acemi, Çırak, Deneyimli, Usta ve Pro.
-- Kuşlar, Geometrik Şekiller ve Klasik Sayılar arasında bulmacayı sıfırlamadan tema değişimi.
-- Not alma, geri alma, temizleme, açıklayıcı ipucu ve isteğe bağlı nazik hata kontrolü.
-- Süre baskısı, can/enerji, seri cezası ve pay-to-win yok.
-- Otomatik yerel kayıt; hesap gerektirmeden çevrimdışı oynama.
-- İlk iki Acemi bulmacasında oynayarak öğrenme.
+## Oyun
 
-## Şu an çalışan dikey dilim
+Her bahçede N farklı taş vardır. Her taş her yatay yolda, her dikey yolda ve her bahçe bölgesinde yalnızca bir kez yer alır. İleri kademelerde ek ilişki işaretleri devreye girer:
 
-- Benzersiz çözümlü 4×4, 6×6 ve 9×9 bulmaca üretimi
-- Beş seviyeli puan ve kilit açma sistemi
-- Belgin'den taşınan tanıdık dokuz kuş ve yaşayan köy görsel dili
-- Hücre-önce ve simge-önce olmak üzere iki doğal giriş biçimi
-- Akıllı not temizleme ve sınırsız geri alma
-- Tema, büyük yazı, yüksek kontrast, hareket azaltma, süre, ses, titreşim ve ekranı açık tutma ayarları
-- PWA/çevrimdışı temel ve Capacitor Android yapılandırması
-- Birim testleri ve üretim derlemesi
+- **Komşuluk noktası:** bağlı iki taş ardışıktır.
+- **Sıra oku:** değer ok yönünde artar.
+- **Toplam bağı:** bağlı iki yuvanın toplamı etiketteki sayıdır.
+
+Tema, yalnızca taşların görünümünü değiştirir. Kuşlar, geometrik şekiller ve klasik sayılar aynı bulmacayı, notları ve ilerlemeyi paylaşır.
+
+## Beşli ustalık yolu
+
+| Kademe | Tahta | Açılma | Ödül | Mantık katmanı |
+|---|---:|---:|---:|---|
+| Acemi | 4×4 | 0 | 50 | Temel yatay/dikey/bahçe |
+| Çırak | 6×6 | 250 | 80 | Ardışık komşuluk |
+| Deneyimli | 6×6 | 800 | 120 | Komşuluk + sıralama |
+| Usta | 9×9 | 1.800 | 170 | Büyük tahta + birleşik ilişkiler |
+| Pro | 9×9 | 3.600 | 240 | Komşuluk + sıralama + toplam |
+
+## Tamamlanan ürün kapsamı
+
+- Deterministik 4×4, 6×6 ve 9×9 bulmaca üretimi
+- Her bulmacada tek çözüm kontrolü
+- İnsan tarafından açıklanabilir tek aday, gizli tek ve ilişki-tek çıkarımları
+- İlk **300 bahçe** için otomatik kalite denetimi: 60 bahçe × 5 kademe
+- Acemi → Pro arasında ölçülmüş, monoton artan zorluk profili
+- İki kısa oynayarak öğrenme dersi: ilk yerleştirme + Not modu
+- Kuşlar / Şekiller / Klasik tema değişimi; aktif oyun sıfırlanmaz
+- Hücre-önce ve taş-önce giriş
+- Not, geri alma, temizleme ve cevabı otomatik koymayan açıklayıcı ipucu
+- İlişki kurallarına göre aday notlarının otomatik temizlenmesi
+- İsteğe bağlı nazik hata kontrolü; hata veya ipucu puan düşürmez
+- Büyük yazı, sayı desteği, yüksek kontrast, hareket azaltma, ses/titreşim ve süre ayarları
+- Oyun ekranında ana akış için dikey scroll gerektirmeyen mobil yerleşim
+- Otomatik yerel kayıt ve kaldığın yerden devam
+- Ustalık arttıkça dekoratif olarak canlanan Kuş Köyü
+- Çevrimdışı PWA kabuğu
+- Capacitor Android projesi ve debug APK GitHub Actions hattı
+- Hesapsız/serversız çalışma; mevcut sürümde analitik ve reklam SDK'sı yok
+
+## Kalite kapıları
+
+Hızlı CI kapısı (motor + UI smoke):
+
+```bash
+npm run check
+npm test
+npm run build
+```
+
+300 bölümlük içerik denetimi:
+
+```bash
+npm run audit:levels
+```
+
+`audit:levels`, her kademede 60 deterministik başlangıç bahçesini tek çözüm, kanonik çözüm, minimum başlangıç taşı, tekrar etmeme ve açıklanabilir çözüm akışı açısından doğrular.
 
 ## Yerel geliştirme
 
-Gereksinim: Node.js 22 veya üzeri.
+Gereksinim: Node.js 22+.
 
 ```bash
-npm install
+npm ci
 npm run dev
-```
-
-Doğrulama:
-
-```bash
-npm test
-npm run build
 ```
 
 Android debug APK:
@@ -48,17 +81,22 @@ npm run android:debug
 ## Mimari
 
 ```text
-src/domain       Sudoku, zorluk, tema ve puan kuralları
-src/state        Sürümlü yerel kayıt ve oyun durum makinesi
-src/components   Tahta, simge, araç çubuğu ve ortak arayüzler
-src/screens      Ana ekran, oyun, ayarlar ve sonuç akışları
-src/hooks        Cihaz davranışları
+src/content.js          Kademe, kuş, tema ve köy ilerleme içeriği
+src/game-core.js        Bulmaca üretimi, constraint çözücü, rating ve ipucu motoru
+src/state.js            Sürümlü yerel kayıt ve çalışma durumu
+src/actions.js          Oyun etkileşimleri, ilerleme ve geri alma
+src/tutorial.js         İlk iki bahçenin oynayarak öğrenme akışı
+src/*-view.js           Ana ekran, oyun ve modal sunum katmanı
+src/ui.js               Tema tokenları, kuş SVG ve ortak UI yardımcıları
+src/styles*.css         60+ odaklı responsive görsel sistem
+scripts/audit-levels.js 300 bahçelik içerik kalite denetimi
+scripts/build-static.js Çevrimdışı/Capacitor için deterministik statik paket
+public/                 Manifest, service worker, gizlilik ve ikon
+test/                   Hızlı motor/regresyon kapısı
 ```
 
-Tema katmanı yalnızca `GameToken` sunumunu değiştirir. Sudoku sayıları, çözüm, notlar ve ilerleme kaydı temadan bağımsızdır.
+Detaylı ürün sözleşmesi: [`docs/GAME_DESIGN_V2.md`](docs/GAME_DESIGN_V2.md)
 
-## Kalite kapısı
+## Yayın ayrımı
 
-Store yayını için yalnızca derlenmesi yeterli kabul edilmez. Fiziksel Android cihazlarda 60+ kullanıcı testi, tekniklere göre zorluk kalibrasyonu, geniş içerik paketi, TalkBack kontrolü, imzalı AAB, gizlilik metni ve Store görselleri tamamlanmadan sürüm “yayına hazır” sayılmaz.
-
-Detaylı plan: [docs/STORE_READINESS.md](docs/STORE_READINESS.md)
+Kod, içerik motoru ve Android debug paket hattı ürün seviyesinde tamamlanabilir; **Store yayını** ayrıca gerçek 60+ katılımcılarla ilk kullanım gözlemi, fiziksel Android/TalkBack matrisi, imzalı AAB ve kapalı test geri bildirimini gerektirir. Bunlar kod içi testlerle ikame edilmez.

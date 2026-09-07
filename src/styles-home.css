@@ -1,0 +1,69 @@
+/* Home */
+.village-hero { min-height: 350px; padding: max(24px, env(safe-area-inset-top)) 22px 24px; position:relative; overflow:hidden; background: linear-gradient(180deg,#cfe7e5 0%,#e7efd9 58%,#e9dfbf 100%); }
+.hero-topbar { display:flex; align-items:flex-start; justify-content:space-between; position:relative; z-index:5; }
+.hero-topbar h1 { font-size: clamp(2rem,7vw,3.4rem); line-height: .95; margin-top: 4px; color:#274f3b; letter-spacing:-.04em; }
+.village-scene { height: 200px; position:relative; margin: 2px -22px -2px; overflow:hidden; }
+.sun { position:absolute; width:56px; height:56px; border-radius:50%; background:#f1c967; right:10%; top:17px; box-shadow:0 0 0 13px rgba(250,220,130,.18); }
+.hill { position:absolute; border-radius:50% 50% 0 0; bottom:-52px; }
+.hill-a { width:84%; height:154px; left:-18%; background:#9bb88a; transform:rotate(5deg); }
+.hill-b { width:90%; height:140px; right:-29%; background:#7f9f76; transform:rotate(-5deg); }
+.house { position:absolute; width:72px; height:53px; background:#f4d29b; bottom:32px; border-radius:5px 5px 7px 7px; box-shadow:0 8px 0 rgba(71,88,55,.09); z-index:2; }
+.house::before { content:""; position:absolute; width:58px; height:58px; background:#a9604b; transform:rotate(45deg); left:7px; top:-30px; border-radius:7px; z-index:-1; }
+.house i { position:absolute; width:18px; height:28px; border-radius:4px 4px 0 0; background:#739482; left:27px; bottom:0; }
+.house-a { left:17%; }
+.house-b { right:14%; transform:scale(.82); bottom:43px; background:#f0c67f; }
+.tree { position:absolute; bottom:33px; width:16px; height:54px; background:#76563f; border-radius:7px; z-index:2; }
+.tree::before,.tree::after { content:""; position:absolute; border-radius:50%; background:#52765a; }
+.tree::before { width:58px; height:58px; left:-22px; top:-29px; }
+.tree::after { width:42px; height:42px; left:1px; top:-12px; background:#66886a; }
+.tree-a { left:7%; bottom:30px; }
+.tree-b { right:34%; bottom:23px; transform:scale(.8); }
+.hero-bird { position:absolute; z-index:4; width:82px; filter:drop-shadow(0 8px 4px rgba(55,77,59,.12)); }
+.hero-bird.bird-a { left:43%; bottom:18px; transform:rotate(-3deg); }
+.hero-bird.bird-b { left:7%; bottom:7px; width:67px; }
+.hero-bird.bird-c { right:28%; bottom:8px; width:61px; }
+.hero-copy { position:relative; z-index:5; width:min(84%,530px); padding:14px 16px; background:rgba(255,253,245,.78); border:1px solid rgba(255,255,255,.7); border-radius:20px; backdrop-filter:blur(8px); }
+.hero-tagline { font-weight:850; font-size:1.18rem; color:#2f5c45; margin-bottom:3px; }
+.hero-copy p:last-child { line-height:1.45; color:#52645a; font-size:.92rem; }
+.stage-2 .village-scene::after,.stage-3 .village-scene::after,.stage-4 .village-scene::after,.stage-5 .village-scene::after { content:"✿  ✿     ✿"; position:absolute; bottom:18px; left:31%; color:#d78378; font-size:24px; letter-spacing:9px; z-index:3; }
+
+.home-content { padding: 18px 18px calc(36px + env(safe-area-inset-bottom)); display:grid; gap:18px; }
+.mastery-card { background:#fffdf8; border:1px solid rgba(72,93,79,.12); border-radius:22px; padding:18px; box-shadow:0 8px 25px rgba(59,72,63,.07); }
+.mastery-head { display:flex; align-items:flex-end; justify-content:space-between; gap:15px; }
+.mastery-head div { display:grid; gap:2px; }
+.mastery-head span, .mastery-card p { color:var(--muted); font-size:.83rem; }
+.mastery-head strong { font-size:1.35rem; }
+.mastery-head b { color:var(--green-dark); font-size:1rem; }
+.progress-track { height:12px; border-radius:99px; background:#e7e5da; margin:13px 0 8px; overflow:hidden; }
+.progress-track span { display:block; height:100%; border-radius:inherit; background:linear-gradient(90deg,#6b997b,#3c7357); transition:width .3s ease; }
+
+.primary-cta { min-height:76px; width:100%; border-radius:22px; padding:14px 19px; display:flex; flex-direction:column; align-items:flex-start; justify-content:center; background:linear-gradient(135deg,#467a5d,#315e48); color:white; box-shadow:0 12px 26px rgba(48,94,72,.22); cursor:pointer; text-align:left; }
+.primary-cta span { font-size:1.18rem; font-weight:850; }
+.primary-cta small { margin-top:4px; font-size:.82rem; opacity:.83; }
+.primary-cta.compact { min-height:68px; align-items:center; text-align:center; margin-top:18px; }
+
+.section-block { display:grid; gap:10px; }
+.section-title { display:flex; align-items:flex-end; justify-content:space-between; gap:12px; padding:0 2px; }
+.section-title h2 { margin-top:3px; font-size:1.18rem; }
+.section-title > span { font-size:.78rem; color:var(--muted); }
+.tier-list { display:grid; gap:8px; }
+.tier-card { min-height:70px; display:grid; grid-template-columns:58px 1fr auto; align-items:center; gap:10px; padding:10px 13px; border:1px solid rgba(70,91,77,.12); border-radius:18px; background:#fffdf8; cursor:pointer; text-align:left; }
+.tier-card.selected { border:2px solid #4e8063; background:#f0f7ef; }
+.tier-card.locked { opacity:.53; cursor:not-allowed; }
+.tier-badge { width:50px; height:50px; border-radius:15px; display:grid; place-items:center; background:#e4eadc; color:#3f654e; font-weight:850; }
+.tier-copy { display:grid; gap:3px; }
+.tier-copy strong { font-size:1rem; }
+.tier-copy small { color:var(--muted); font-size:.78rem; }
+.tier-meta { font-weight:800; color:var(--green-dark); font-size:.78rem; }
+
+.theme-switcher { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
+.theme-switcher.compact { margin:6px 0 16px; }
+.theme-option { min-height:92px; padding:8px; border:1px solid rgba(70,91,77,.15); border-radius:18px; background:#fffdf8; display:grid; place-items:center; gap:3px; cursor:pointer; }
+.theme-option.selected { border:2px solid #4e8063; background:#eff7ef; }
+.theme-option > span { width:49px; height:49px; display:grid; place-items:center; }
+.theme-option .bird-token { width:48px; height:48px; }
+.theme-option strong { font-size:.78rem; }
+.theme-symbol { font-size:2rem; font-weight:850; color:#426653; }
+.daily-card { padding:22px; border-radius:22px; background:#e8ddc3; border:1px solid #d8c8a6; }
+.daily-card h2 { font-size:1.25rem; margin:5px 0 5px; color:#4a593f; }
+.daily-card p:last-child { color:#65705d; line-height:1.5; font-size:.9rem; }
