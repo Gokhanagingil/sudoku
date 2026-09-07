@@ -1,0 +1,20 @@
+{
+  "name": "Kuş Köyü Sudoku",
+  "short_name": "Kuş Sudoku",
+  "description": "Kuşlarla sakin ve erişilebilir Sudoku deneyimi.",
+  "lang": "tr",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f5efe2",
+  "theme_color": "#f5efe2",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "./app-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Kuş Köyü Sudoku</string>
+    <string name="title_activity_main">Kuş Köyü Sudoku</string>
+    <string name="package_name">com.gokhanagingil.kuskoyusudoku</string>
+    <string name="custom_url_scheme">com.gokhanagingil.kuskoyusudoku</string>
+</resources>
