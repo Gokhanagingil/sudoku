@@ -9,7 +9,7 @@ permissions:
   contents: read
 
 jobs:
-  web-quality:
+  game-quality:
     runs-on: ubuntu-latest
     timeout-minutes: 12
     steps:
@@ -19,5 +19,7 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      - run: npm run check
       - run: npm test
+      - run: npm run audit:levels
       - run: npm run build

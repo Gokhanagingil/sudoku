@@ -1,0 +1,63 @@
+@media (max-width: 420px) {
+  .village-hero { min-height:330px; }
+  .village-scene { height:180px; }
+  .home-content { padding-left:12px; padding-right:12px; }
+  .game-body { padding-left:8px; padding-right:8px; gap:7px; }
+  .game-header { padding-left:9px; padding-right:9px; }
+  .board { width:min(100%, calc(100dvh - 350px)); border-radius:15px; }
+  .coach-card { grid-template-columns:38px 1fr auto; padding:8px; }
+  .status-pill { min-height:42px; }
+  .tool-button { min-height:58px; border-radius:14px; }
+  .token-tray { min-height:58px; }
+}
+
+@media (max-height: 720px) {
+  .game-header { min-height:64px; }
+  .game-body { gap:5px; }
+  .status-pill { min-height:38px; }
+  .rule-chip { min-height:27px; font-size:.64rem; }
+  .board { width:min(100%, calc(100dvh - 300px)); }
+  .token-tray { min-height:50px; }
+  .tool-button { min-height:50px; grid-template-rows:18px auto; }
+  .tool-button small { display:none; }
+}
+
+@media (min-width: 700px) {
+  .home-content { padding:22px 28px 50px; }
+  .game-body { padding-left:24px; padding-right:24px; }
+  .tier-list { grid-template-columns:repeat(2,1fr); }
+  .tier-card:last-child { grid-column:1/-1; }
+}
+
+/* Denge v2 product polish */
+.home-stats { display:grid; grid-template-columns:repeat(3,1fr); gap:7px; margin-top:14px; padding-top:13px; border-top:1px solid #ece9df; }
+.home-stats span { min-width:0; display:grid; gap:1px; text-align:center; }
+.home-stats b { color:var(--green-dark); font-size:.86rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.home-stats small { color:var(--muted); font-size:.64rem; }
+
+.game-screen { height:100dvh; min-height:100dvh; max-height:100dvh; overflow:hidden; display:flex; flex-direction:column; }
+.game-header { position:relative; flex:0 0 auto; }
+.game-body { flex:1 1 auto; min-height:0; height:auto; overflow:hidden; }
+.game-body .board-wrap { overflow:visible; }
+.cell.tutorial-target,.tray-token.tutorial-target,.tool-button.tutorial-target { z-index:12; animation:tutorial-beacon 1.15s ease-in-out infinite; box-shadow:inset 0 0 0 4px #d69c27,0 0 0 4px rgba(246,218,151,.76); }
+@keyframes tutorial-beacon { 50% { box-shadow:inset 0 0 0 4px #b97b19,0 0 0 8px rgba(246,218,151,.42); } }
+.tool-button.tutorial-target { position:relative; }
+.tray-token.tutorial-target { transform:translateY(-2px); background:#fff6d9; }
+.cell.tutorial-target { background:#fff5cf; }
+
+.high-contrast .cell.tutorial-target,.high-contrast .tray-token.tutorial-target,.high-contrast .tool-button.tutorial-target { box-shadow:inset 0 0 0 4px #7b4e00,0 0 0 4px #f2c45f; }
+.high-contrast .cell { border-color:#7a847d; }
+.high-contrast .rule-chip { border:1px solid #7d8d82; }
+
+@media (max-width: 420px) {
+  .home-stats b { font-size:.78rem; }
+  .game-status-row { gap:5px; }
+  .status-pill { border-radius:13px; }
+}
+
+@media (max-height: 760px) {
+  .coach-card { padding:7px 9px; }
+  .coach-card > span { width:31px; height:31px; }
+  .coach-card p { display:none; }
+  .rule-strip { min-height:27px; }
+}

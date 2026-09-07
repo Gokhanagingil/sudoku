@@ -1,18 +1,19 @@
-# Kuş Köyü: Denge — Oyun Tasarımı V2
+# Kuş Köyü: Denge — Ürün ve Oyun Sözleşmesi
 
-**Durum:** Uygulamaya alınan ürün yönü  
 **Repo:** `Gokhanagingil/sudoku`  
-**Ana fikir:** Sudoku'ya benzeyen çıkarım omurgasını koru; Sudoku kopyası üretme.
+**Ürün adı:** Kuş Köyü: Denge  
+**Birincil hedef:** 60+ yetişkinler  
+**Durum:** Oynanabilir ürün kapsamı uygulanmış; Store öncesi fiziksel kullanıcı/cihaz doğrulaması ayrı kapıdır.
 
 ## 1. Ürün kimliği
 
-Oyuncu bir sayı tablosu doldurmuyor; Kuş Köyü'ndeki yuvaların dengesini kuruyor. Tahta matematiksel olarak düzenli bir mantık problemi olsa da görsel dil "hücre doldurma" yerine bahçe, yuva, patika ve kuş yerleştirme hissi verir.
+Oyuncu bir sayı tablosu doldurmaz; Kuş Köyü'ndeki yuvaların dengesini kurar. Matematiksel omurga düzenli bir Latin/bölge mantığıdır, ancak görsel dil yuva, bahçe, yol ve kuş yerleştirmedir.
 
-Çalışma adı **Kuş Köyü: Denge**. Repo adının `sudoku` olarak kalması teknik açıdan sorun değildir; mağaza adı daha sonra kullanıcı testiyle kesinleştirilebilir.
+Belgin uygulaması değiştirilmez. Denge bağımsız paket ve kayıt alanına sahiptir; yalnızca sevilen Kuş Köyü görsel duygusunu sürdürür.
 
-## 2. Değişmeyen ana kural
+## 2. Ana kural
 
-N×N tahtada N farklı oyun taşı bulunur. Her taş:
+N×N tahtada N farklı `GameToken` bulunur. Her taş:
 
 1. her yatay yolda bir kez,
 2. her dikey yolda bir kez,
@@ -20,138 +21,130 @@ N×N tahtada N farklı oyun taşı bulunur. Her taş:
 
 yer alır.
 
-Bu kural, tema ne olursa olsun aynıdır. Kuş `Maviş`, geometrik `●` ve klasik `1` aynı `GameToken(1)` değerinin farklı sunumlarıdır.
+Kuş `Maviş`, geometrik `●` ve klasik `1`, aynı mantıksal `GameToken(1)` değerinin farklı sunumlarıdır.
 
-## 3. Sudoku'nun üzerine çıkan ilişki katmanı
+## 3. Özgün ilişki katmanı
 
-### 3.1 Komşuluk noktası
+### Komşuluk noktası
 
-İki komşu yuva arasındaki dolu nokta, iki taşın sıra değerlerinin ardışık olduğunu söyler. Örnek: 3 ve 4 olabilir; 3 ve 5 olamaz.
+İki komşu yuva arasındaki dolu nokta, değerlerin ardışık olduğunu söyler. 3–4 geçerlidir; 3–5 değildir.
 
-### 3.2 Sıra oku
+### Sıra oku
 
 Okun başladığı yuvadaki değer, okun gösterdiği yuvadaki değerden küçüktür.
 
-### 3.3 Toplam bağı
+### Toplam bağı
 
-İki bağlı yuvanın ortasındaki küçük etiket, bu iki yuvanın sıra değerleri toplamını gösterir. Bu ilişki ileri seviyelerde devreye girer.
+İki bağlı yuvanın ortasındaki etiket, değerlerin toplamıdır. Yalnız Pro kademesinde kullanılır.
+
+Bu üç ilişki, aday hesaplama, çözücü, hata denetimi, not temizleme ve ipucu motorunda gerçek constraint olarak uygulanır; yalnız görsel süs değildir.
 
 ## 4. Zorluk modeli
 
-Zorluk "kaç hücre boş" ölçüsü değildir. İçerik kalitesi, bulmacanın insan mantığıyla çözüm sırasındaki teknik gereksinimine göre ölçülmelidir.
+Zorluk sadece başlangıç taşlarının sayısı değildir. Üretici her aday bulmacayı insanın takip edebileceği tekniklerle analiz eder ve bir rating üretir.
 
-### Acemi
+| Kademe | Boyut | Başlangıç hedefi | İlişki planı | 60 bahçe ortalama rating* |
+|---|---:|---:|---|---:|
+| Acemi | 4×4 | 8 | — | 8.0 |
+| Çırak | 6×6 | 16 | 4 komşuluk | 24.6 |
+| Deneyimli | 6×6 | 12 | 5 komşuluk + 3 sıra | 45.4 |
+| Usta | 9×9 | 31 | 7 komşuluk + 5 sıra | 81.8 |
+| Pro | 9×9 | 24 | 9 komşuluk + 6 sıra + 5 toplam | 134.3 |
 
-- 4×4
-- İlişki ipucu yok
-- Tek aday ve gizli tek mantığı
-- İlk iki bölüm bağlamsal eğitim
+\* 300 başlangıç bahçesinin 7 Eylül 2026 otomatik audit sonucu. Rating ürün içi skor değildir; içerik kalibrasyonu içindir.
 
-### Çırak
+Kullanılan açıklanabilir temel teknikler:
 
-- 6×6
-- Komşuluk noktaları
-- Tek aday + bölge kesişimi
-- Daha az başlangıç taşı
+- tek aday,
+- yatay/dikey/bahçede gizli tek,
+- ilişki kısıtı nedeniyle tek aday.
 
-### Deneyimli
+İpucu motoru bu tekniklerin nedenini Türkçe açıklar ve cevabı kendi kendine yerleştirmez.
 
-- 6×6
-- Komşuluk + sıra oku
-- Birden fazla ipucunu birlikte okuma
-- Not kullanımı doğal biçimde faydalı hale gelir
+## 5. İlk kullanım eğitimi
 
-### Usta
+Uzun öğretici ekran yoktur.
 
-- 9×9
-- Büyük tahta
-- Komşuluk + sıra
-- Aday çiftleri ve zincirli çıkarımlar için içerik kalibrasyonu
+### Acemi Bahçe 1 — İlk çıkarım
 
-### Pro
+- Sistem çözülebilir hedef yuvayı belirler ve yalnız o yuvayı parlatır.
+- Oyuncu yuvayı seçer.
+- Sistem yalnız doğru tek adayı parlatır.
+- Oyuncu taşı kendisi yerleştirir.
+- Eğitim biter; oyun normal devam eder.
 
-- 9×9
-- Komşuluk + sıra + toplam
-- Düşük başlangıç yoğunluğu
-- Birkaç mantık tekniğini art arda kullanma
+### Acemi Bahçe 2 — Not
 
-> Motor tek çözümü doğrular. Store seviyesine gelmeden önce ikinci aşamada "insan tekniği çözücüsü" her bulmacaya teknik profili ve difficulty score atamalıdır.
+- Not düğmesi parlatılır.
+- Birden fazla adayı olan örnek yuva seçtirilir.
+- Tek bir aday küçük not olarak eklettirilir.
+- Oyuncu Not'un cevap değil, aday işareti olduğunu yaşayarak görür.
 
-## 5. 60+ UX sözleşmesi
+Her iki ders de `Geç` ile kapatılabilir ve tekrar zorla gösterilmez.
 
-Bu maddeler özellik değil kabul kriteridir:
+## 6. 60+ UX kabul kriterleri
 
-- Oyun ekranının temel akışında dikey scroll gerekmemesi hedeflenir.
-- Ana aksiyonlar alt bölgede sabittir ve en az 48 dp dokunma hedefi taşır; hedef 56–64 dp'dir.
-- İlk kullanımda tam ekran metin duvarı gösterilmez.
-- İlk aksiyon "boş yuvaya dokun" olarak görsel bağlamda öğretilir.
-- Kuşlar yalnız renk ile ayırt edilmez; biçim ve isteğe bağlı sıra numarası birlikte kullanılır.
-- Yanlış hamle sesli/sert biçimde cezalandırılmaz.
-- İpucu cevabı otomatik koymaz; oyuncunun son eylemi kendisinin yapmasına izin verir.
-- Not modu açıkken durum hem renk hem metinle (`Açık`) belirtilir.
-- Geri alma sınırsız kullanıcı deneyimi olarak ele alınır.
-- Süre kapalı varsayılır; açıldığında skor veya ödül üzerinde etkisi yoktur.
-- TalkBack/ekran okuyucu etiketleri hücrede satır, sütun, durum ve taş bilgisini söylemelidir.
+- Ana oyun akışında dikey scroll gerekmemesi.
+- Birincil kontrollerin alt bölgede, büyük ve birbirinden ayrık olması.
+- Not modunun yalnız renkle değil `Açık/Kapalı` metniyle belirtilmesi.
+- Kuşların yalnız renkle ayrılmaması; gövde/desen + isteğe bağlı sayı desteği.
+- Sürenin kapalı varsayılması ve puanı hiçbir zaman etkilememesi.
+- Hatanın sert ses, can kaybı veya puan cezası üretmemesi.
+- İpucunun otomatik cevap koymaması.
+- Geri almanın kullanıcı açısından sınırsız hissettirilmesi; son 100 durum teknik tamponu pratikte fazlasıyla yeterlidir.
+- TalkBack etiketinde yatay yol, dikey yol, boş/dolu durum ve taş bilgisinin bulunması.
+- Hareket azaltma ve yüksek kontrast seçeneklerinin bulunması.
+- Desteklenen cihazlarda ekranı açık tutma.
 
-## 6. Tema sözleşmesi
+## 7. Tema sözleşmesi
 
-Tema yalnızca `GameToken` sunumunu değiştirir.
+`birds`, `shapes`, `numbers` yalnız sunum katmanıdır. Tema değişiminde aşağıdakiler korunur:
 
-- `birds`: Kuş Köyü'nün ana marka yüzü
-- `shapes`: Geometrik şekiller
-- `numbers`: Klasik sayı görünümü
+- bulmaca kimliği ve çözüm,
+- yerleştirmeler,
+- notlar,
+- geri alma geçmişi,
+- eğitim durumu,
+- puan ve tamamlanma.
 
-Aşağıdakiler tema değişiminde asla sıfırlanmaz:
+## 8. Ustalık ve köy
 
-- bulmaca kimliği
-- çözüm
-- oyuncu yerleştirmeleri
-- notlar
-- geri alma geçmişi
-- puan ve tamamlanma durumu
+Puan yalnız ilerleme için kullanılır. Aynı puzzle ID ikinci kez ödül üretmez. İpucu, hata, geri alma ve süre ödülü azaltmaz.
 
-## 7. Retention: köyün canlanması
+Köy 0 / 250 / 800 / 1.800 / 3.600 puan eşiklerinde dekoratif olarak zenginleşir. Bu bir ekonomi ya da yönetim oyunu değildir ve bulmaca avantajı vermez.
 
-Bulmaca dışına ikinci bir ekonomi/management oyunu eklenmez. Bunun yerine ustalık puanı yükseldikçe ana ekrandaki köy dekoratif olarak canlanır:
+## 9. İçerik kalite kapısı
 
-- yeni kuşlar görünür,
-- çiçekler çoğalır,
-- ev/yuva detayları artar,
-- sahne daha yaşayan hale gelir.
+Başlangıç paketi 5 × 60 = **300 bahçe** olarak denetlenir. `npm run audit:levels` şu koşulları fail-closed doğrular:
 
-Bu ilerleme oyuncuya duygusal süreklilik verir, ancak bulmaca kurallarına avantaj sağlamaz.
+- tek çözüm,
+- kanonik çözümle eşleşme,
+- kademe başlangıç taşı alt sınırı,
+- aynı kademede tekrar etmeme,
+- temel açıklanabilir tekniklerle çözümün tamamlanması,
+- aynı tier/ordinal için deterministik üretim,
+- Acemi → Pro ortalama rating artışı.
 
-## 8. Puan ve kilit açma
+Motor 60'tan sonraki ordinals için de deterministik bahçe üretmeye devam eder; 300 sayısı ilk kalite-onaylı paket sınırıdır.
 
-Puan yalnızca ustalık ilerlemesidir. İpucu, hata düzeltme veya uzun süre harcama ödülü azaltmaz. Aynı puzzle ID ikinci kez çözülürse tekrar ustalık puanı verilmez.
+## 10. Teknik ve dağıtım
 
-## 9. Kalite kapıları
+- Web katmanı framework bağımsız ES module'dür.
+- Statik build, kaynakları `dist/` altına deterministik olarak kopyalar; bu yapı PWA ve Capacitor tarafından aynen tüketilir.
+- PWA shell service worker ile çevrimdışı önbelleğe alınır.
+- Android `webDir=dist` kullanır.
+- Uygulama kimliği tarihsel uyumluluk için `com.gokhanagingil.kuskoyusudoku` kalabilir; görünen uygulama adı `Kuş Köyü: Denge`dir.
+- Bu sürüm sunucu, hesap, analitik veya reklam SDK'sı gerektirmez.
 
-### V2 temel kapısı
+## 11. Otomasyonla tamamlanamayacak yayın kapıları
 
-- [x] Ürün yönü Sudoku kopyasından bağımsızlaştırıldı
-- [x] 4×4 / 6×6 / 9×9 tasarım kararı
-- [x] İlişki constraint modeli
-- [x] tema bağımsız kayıt sözleşmesi
-- [x] beş kademe puan sistemi
+Aşağıdakiler “kod tamamlandı” iddiasından ayrı tutulur ve gerçek cihaz/insan kanıtı gerektirir:
 
-### Beta kapısı
+- en az 8 adet 60+ katılımcıyla ilk kullanım gözlemi,
+- küçük/büyük fiziksel Android telefon ve tablet matrisi,
+- TalkBack ile gerçek cihaz navigasyonu,
+- imzalı release AAB ve Play Console kapalı test,
+- kapalı test geri bildiriminden doğan son UX düzeltmeleri,
+- Store görselleri ve son veri güvenliği beyanı.
 
-- [ ] İnsan tekniği çözücüsü ve difficulty rating
-- [ ] En az 150 kalite taramasından geçmiş puzzle seed'i
-- [ ] 9×9 küçük ekran görsel regresyon matrisi
-- [ ] İlk kullanım gözlem testi: en az 8 adet 60+ katılımcı
-- [ ] TalkBack fiziksel cihaz testi
-- [ ] Android paketleme + debug APK
-
-### Store kapısı
-
-- [ ] Kapalı testten UX düzeltmeleri
-- [ ] İmzalı AAB
-- [ ] Gizlilik/veri güvenliği kontrolü
-- [ ] Çökme/ANR kontrolü
-- [ ] En az 300 kalite onaylı normal bölüm + günlük bulmaca havuzu
-
-## 10. Bir sonraki büyük teknik adım
-
-Bir sonraki büyük iş, **human-technique solver + curated level pack + Android physical-device UX** üçlüsüdür. Bu üçü tamamlanmadan yalnızca daha fazla özellik eklemek ürün kalitesini artırmaz.
+Bu kapılar geçilmeden “Store'a yayınlanmaya hazır” etiketi verilmez; ancak oyun fonksiyonları ve debug paket hattı bunlardan bağımsız olarak tamamlanır.
