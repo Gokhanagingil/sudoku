@@ -1,64 +1,57 @@
-# Kuş Köyü Sudoku
+# Kuş Köyü: Denge
 
-Kuş Köyü Sudoku, Belgin uygulamasındaki sevilen Kuş Köyü duygusunu koruyan; yalnızca Sudoku deneyimine odaklanan, çevrimdışı ve 60+ yaş erişilebilirliği öncelikli bir mobil oyundur.
+> Repo adı `sudoku` tarihsel bir çalışma adıdır. Ürün Sudoku kopyası değildir.
 
-## Ürün vaadi
+**Kuş Köyü: Denge**, Belgin uygulamasında sevilen sıcak Kuş Köyü duygusunu koruyan; satır–sütun–bahçe benzersizliğini komşuluk, sıralama ve toplam ilişkileriyle genişleten, 60+ yaş erişilebilirliğini birinci sınıf gereksinim kabul eden bağımsız bir mantık oyunudur.
 
-- Tek oyun, net amaç: satır, sütun ve bölge Sudoku'su.
-- Beş puanla açılan kademe: Acemi, Çırak, Deneyimli, Usta ve Pro.
-- Kuşlar, Geometrik Şekiller ve Klasik Sayılar arasında bulmacayı sıfırlamadan tema değişimi.
-- Not alma, geri alma, temizleme, açıklayıcı ipucu ve isteğe bağlı nazik hata kontrolü.
-- Süre baskısı, can/enerji, seri cezası ve pay-to-win yok.
-- Otomatik yerel kayıt; hesap gerektirmeden çevrimdışı oynama.
-- İlk iki Acemi bulmacasında oynayarak öğrenme.
+## Neden klasik Sudoku değil?
 
-## Şu an çalışan dikey dilim
+Klasik Sudoku yalnızca başlangıç omurgasıdır. Denge'de aynı temel çıkarım fikri farklı ilişki katmanlarıyla büyür:
 
-- Benzersiz çözümlü 4×4, 6×6 ve 9×9 bulmaca üretimi
-- Beş seviyeli puan ve kilit açma sistemi
-- Belgin'den taşınan tanıdık dokuz kuş ve yaşayan köy görsel dili
-- Hücre-önce ve simge-önce olmak üzere iki doğal giriş biçimi
-- Akıllı not temizleme ve sınırsız geri alma
-- Tema, büyük yazı, yüksek kontrast, hareket azaltma, süre, ses, titreşim ve ekranı açık tutma ayarları
-- PWA/çevrimdışı temel ve Capacitor Android yapılandırması
-- Birim testleri ve üretim derlemesi
+- Her satırda, sütunda ve bahçede her taş bir kez bulunur.
+- **Komşuluk noktası:** bağlı iki taşın sıra değeri ardışıktır.
+- **Sıra oku:** değerler ok yönünde artar.
+- **Toplam bağı:** iki yuvanın toplamı verilen değere eşittir.
+- Zorluk yalnızca daha az başlangıç taşıyla değil, çözüm sırasında gereken mantık teknikleriyle artar.
 
-## Yerel geliştirme
+Bu yapı kuş, geometrik şekil ve klasik sayı temalarında aynı bulmacayı, notları ve ilerlemeyi korur.
 
-Gereksinim: Node.js 22 veya üzeri.
+## Ürün ilkeleri
 
-```bash
-npm install
-npm run dev
-```
+- 60+ için büyük dokunma hedefleri, sakin hiyerarşi ve yüksek okunabilirlik
+- İlk iki Acemi bahçesinde oynayarak öğrenme; uzun talimat ekranı yok
+- Not alma, sınırsız geri alma, temizleme ve açıklayıcı ipucu
+- İpucu cevabı otomatik yerleştirmez; doğru yuvayı ve mantığı açıklar
+- Süre isteğe bağlıdır ve puanı etkilemez
+- Can, enerji, seri cezası, hata cezası ve pay-to-win yok
+- Otomatik yerel kayıt ve kaldığın yerden devam
+- Tema değişimi yalnızca sunumdur; oyun mantığı değişmez
+- Köy, ustalık puanı arttıkça görsel olarak canlanır; ayrı bir yönetim oyunu değildir
 
-Doğrulama:
+## Beşli ustalık yolu
 
-```bash
-npm test
-npm run build
-```
+| Kademe | Tahta | Açılma | Bulmaca ödülü | Yeni mantık |
+|---|---:|---:|---:|---|
+| Acemi | 4×4 | 0 | 50 | Temel satır/sütun/bahçe |
+| Çırak | 6×6 | 250 | 80 | Ardışık komşuluk |
+| Deneyimli | 6×6 | 800 | 120 | Komşuluk + sıralama |
+| Usta | 9×9 | 1.800 | 170 | Büyük tahta + birleşik ilişkiler |
+| Pro | 9×9 | 3.600 | 240 | Daha az başlangıç + toplam ilişkileri |
 
-Android debug APK:
+## Hedef kapsam
 
-```bash
-npm run android:debug
-```
+- Deterministik 4×4, 6×6 ve 9×9 bulmaca üretimi
+- Her bulmaca için tek çözüm kontrolü
+- İlişki ipuçları: ardışık, sıralama, toplam
+- Kuşlar / Geometrik Şekiller / Klasik temaları
+- Tema değiştirirken aktif oyun ve notların korunması
+- Hücre-önce ve taş-önce giriş
+- Not modu, akıllı not temizleme, geri alma ve temizleme
+- Açıklayıcı, otomatik yerleştirmeyen ipucu
+- Nazik isteğe bağlı hata kontrolü
+- Büyük yazı, yüksek kontrast, hareket azaltma, sayı desteği ve ekranı açık tutma
+- İlk Acemi deneyimi için bağlamsal eğitim
+- Çevrimdışı kullanım
+- Ustalık puanı ve beş kademeli kilit açma
 
-## Mimari
-
-```text
-src/domain       Sudoku, zorluk, tema ve puan kuralları
-src/state        Sürümlü yerel kayıt ve oyun durum makinesi
-src/components   Tahta, simge, araç çubuğu ve ortak arayüzler
-src/screens      Ana ekran, oyun, ayarlar ve sonuç akışları
-src/hooks        Cihaz davranışları
-```
-
-Tema katmanı yalnızca `GameToken` sunumunu değiştirir. Sudoku sayıları, çözüm, notlar ve ilerleme kaydı temadan bağımsızdır.
-
-## Kalite kapısı
-
-Store yayını için yalnızca derlenmesi yeterli kabul edilmez. Fiziksel Android cihazlarda 60+ kullanıcı testi, tekniklere göre zorluk kalibrasyonu, geniş içerik paketi, TalkBack kontrolü, imzalı AAB, gizlilik metni ve Store görselleri tamamlanmadan sürüm “yayına hazır” sayılmaz.
-
-Detaylı plan: [docs/STORE_READINESS.md](docs/STORE_READINESS.md)
+Ürün tasarımı: [`docs/GAME_DESIGN_V2.md`](docs/GAME_DESIGN_V2.md)
