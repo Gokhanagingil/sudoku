@@ -1,3 +1,4 @@
+import { elapsedMillis, pauseClock, resumeClock } from "./clock.js";
 import { tierForId, unlockedTier } from "./content.js";
 import { candidatesFor, createPuzzle, isComplete, logicalHint } from "./game-core.js";
 import { releaseWakeLock, requestWakeLock, softFeedback } from "./feedback.js";
@@ -19,7 +20,7 @@ export function ensurePuzzle() {
 export function elapsedSeconds() {
   const game = runtime.save.activeGame;
   if (!game) return 0;
-  return Math.floor((game.elapsedBefore + Date.now() - game.startedAt) / 1000);
+  return Math.floor(elapsedMillis(game) / 1000);
 }
 
 export function formatTime(seconds) {
@@ -37,7 +38,7 @@ export function startGame(tierId = runtime.save.selectedTier) {
   if (runtime.save.score < tier.unlockScore) return;
   const ordinal = runtime.save.nextOrdinal[tierId] || 1;
   runtime.puzzle = createPuzzle(tierId, ordinal);
-  runtime.save.activeGame = { tierId, ordinal, values:[...runtime.puzzle.givens], notes:{}, history:[], startedAt:Date.now(), elapsedBefore:0, tutorial:null };
+  runtime.save.activeGame = { tierId, ordinal, values:[...runtime.puzzle.givens], notes:{}, history:[], startedAt:Date.now(), elapsedBefore:0, clockRunning:true, tutorial:null };
   normalizeActiveTutorial();
   runtime.save.selectedTier = tierId;
   runtime.selectedCell = null; runtime.selectedToken = null; runtime.notesMode = false; runtime.hintFocus = null; runtime.screen = "game";
@@ -46,7 +47,7 @@ export function startGame(tierId = runtime.save.selectedTier) {
 
 export function continueGame() {
   if (!runtime.save.activeGame) return startGame();
-  ensurePuzzle(); runtime.screen = "game"; runtime.selectedCell = null; runtime.selectedToken = null; runtime.hintFocus = null; requestWakeLock(); hooks.renderGame();
+  ensurePuzzle(); resumeClock(runtime.save.activeGame); runtime.screen = "game"; runtime.selectedCell = null; runtime.selectedToken = null; runtime.hintFocus = null; requestWakeLock(); hooks.renderGame();
 }
 
 function tutorialRedirect(message) { softFeedback("nudge"); hooks.toast(message,2600); }
@@ -100,8 +101,8 @@ export function skipTutorial(){const t=currentTutorial();if(!t)return;markTutori
 export function finishTutorialCard(){const t=currentTutorial();if(!t)return;markTutorialLessonComplete(t.lesson);softFeedback("complete");hooks.renderGame();}
 export function finishRuleIntro(){const id=runtime.save.activeGame?.tierId;if(id&&!runtime.save.ruleIntrosSeen.includes(id))runtime.save.ruleIntrosSeen.push(id);persist();softFeedback("select");hooks.renderGame();}
 
-function finishPuzzle(){const game=runtime.save.activeGame,tier=tierForId(game.tierId),id=`${game.tierId}-${game.ordinal}`,already=runtime.save.completed.includes(id),previous=unlockedTier(runtime.save.score).id,timeText=formatTime(elapsedSeconds());if(!already){runtime.save.completed.push(id);runtime.save.score+=tier.reward;runtime.save.stats.completed+=1;}runtime.save.nextOrdinal[game.tierId]=Math.max(runtime.save.nextOrdinal[game.tierId]||1,game.ordinal+1);const newer=unlockedTier(runtime.save.score).id;runtime.result={tierId:game.tierId,ordinal:game.ordinal,reward:already?0:tier.reward,unlockedNewTier:previous!==newer?tierForId(newer):null,timeText};runtime.save.activeGame=null;persist();releaseWakeLock();softFeedback("complete");hooks.renderResult();}
+function finishPuzzle(){const game=runtime.save.activeGame,tier=tierForId(game.tierId),id=`${game.tierId}-${game.ordinal}`,already=runtime.save.completed.includes(id),previous=unlockedTier(runtime.save.score).id,timeText=formatTime(elapsedSeconds());if(!already){runtime.save.completed.push(id);runtime.save.score+=tier.reward;runtime.save.stats.completed+=1;}runtime.save.nextOrdinal[game.tierId]=Math.max(runtime.save.nextOrdinal[game.tierId]||1,game.ordinal+1);const newer=unlockedTier(runtime.save.score).id;runtime.result={tierId:game.tierId,ordinal:game.ordinal,reward:already?0:tier.reward,unlockedNewTier:previous!==newer?tierForId(newer):null,timeText};runtime.save.activeGame=null;runtime.screen="result";persist();releaseWakeLock();softFeedback("complete");hooks.renderResult();}
 
-export function restartGame(){if(!runtime.save.activeGame)return;if(!window.confirm("Bu bahçedeki yerleştirmeleri ve notları temizleyip baştan başlamak istiyor musun?"))return;ensurePuzzle();const game=runtime.save.activeGame;game.values=[...runtime.puzzle.givens];game.notes={};game.history=[];game.startedAt=Date.now();game.elapsedBefore=0;game.tutorial=buildTutorial(tutorialLessonFor(game.tierId,game.ordinal));runtime.selectedCell=null;runtime.selectedToken=null;runtime.hintFocus=null;runtime.notesMode=false;runtime.menuOpen=false;persist();hooks.renderGame();}
+export function restartGame(){if(!runtime.save.activeGame)return;if(!window.confirm("Bu bahçedeki yerleştirmeleri ve notları temizleyip baştan başlamak istiyor musun?"))return;ensurePuzzle();const game=runtime.save.activeGame;game.values=[...runtime.puzzle.givens];game.notes={};game.history=[];game.startedAt=Date.now();game.elapsedBefore=0;game.clockRunning=true;game.tutorial=buildTutorial(tutorialLessonFor(game.tierId,game.ordinal));runtime.selectedCell=null;runtime.selectedToken=null;runtime.hintFocus=null;runtime.notesMode=false;runtime.menuOpen=false;persist();hooks.renderGame();}
 
-export function goHome(){if(runtime.save.activeGame){runtime.save.activeGame.elapsedBefore+=Date.now()-runtime.save.activeGame.startedAt;runtime.save.activeGame.startedAt=Date.now();persist();}runtime.screen="home";runtime.menuOpen=false;runtime.settingsOpen=false;runtime.result=null;runtime.selectedCell=null;runtime.selectedToken=null;runtime.hintFocus=null;hooks.stopTimer();hooks.renderHome();}
+export function goHome(){if(runtime.save.activeGame){pauseClock(runtime.save.activeGame);persist();}runtime.screen="home";runtime.menuOpen=false;runtime.settingsOpen=false;runtime.result=null;runtime.selectedCell=null;runtime.selectedToken=null;runtime.hintFocus=null;hooks.stopTimer();hooks.renderHome();}

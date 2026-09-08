@@ -6,3 +6,12 @@ coverage
 android/.gradle
 android/app/build
 android/build
+*.jks
+*.keystore
+signing.properties
+.env
+.env.*
+test-output
+validation-artifacts
+play-output
+signature-check.txt

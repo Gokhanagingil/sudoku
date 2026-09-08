@@ -46,7 +46,7 @@ export function softFeedback(kind) {
 }
 
 export async function requestWakeLock() {
-  if (!runtime.settings.keepAwake || !navigator.wakeLock || runtime.screen !== "game" || !runtime.save.activeGame) return;
+  if ((wakeLock && !wakeLock.released) || !runtime.settings.keepAwake || !navigator.wakeLock || runtime.screen !== "game" || !runtime.save.activeGame) return;
   try { wakeLock = await navigator.wakeLock.request("screen"); } catch { /* platform may reject */ }
 }
 

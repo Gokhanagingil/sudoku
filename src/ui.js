@@ -1,3 +1,4 @@
+import { SHAPE_NAMES, shapeSvg } from "./shapes.js";
 import { BIRDS, GEOMETRIC, VILLAGE_MILESTONES } from "./content.js";
 import { runtime } from "./state.js";
 
@@ -43,13 +44,13 @@ export function birdSvg(index, compact = false) {
 export function tokenMarkup(value, compact = false) {
   if (!value) return "";
   if (runtime.save.theme === "numbers") return `<span class="number-token">${value}</span>`;
-  if (runtime.save.theme === "shapes") return `<span class="shape-token">${esc(GEOMETRIC[value - 1])}<span class="token-rank">${value}</span></span>`;
+  if (runtime.save.theme === "shapes") return `<span class="shape-token">${shapeSvg(value)}<span class="token-rank">${value}</span></span>`;
   return birdSvg(value - 1, compact);
 }
 
 export function tokenName(value) {
   if (runtime.save.theme === "birds") return `${BIRDS[value - 1].name}, ${value}`;
-  if (runtime.save.theme === "shapes") return `${GEOMETRIC[value - 1]}, ${value}`;
+  if (runtime.save.theme === "shapes") return `${SHAPE_NAMES[value - 1]}, ${value}`;
   return String(value);
 }
 

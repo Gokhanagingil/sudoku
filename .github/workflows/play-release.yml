@@ -1,0 +1,72 @@
+name: Signed Play Bundle (manual)
+on:
+  workflow_dispatch:
+    inputs:
+      reviewed_sha:
+        description: Exact main commit accepted after Readiness and device tests
+        required: true
+        type: string
+permissions:
+  contents: read
+jobs:
+  bundle:
+    if: github.ref == 'refs/heads/main'
+    environment: google-play
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      ADMOB_APP_ID: ${{ vars.ADMOB_APP_ID }}
+      ADMOB_BANNER_ID: ${{ vars.ADMOB_BANNER_ID }}
+      PRIVACY_POLICY_URL: ${{ vars.PRIVACY_POLICY_URL }}
+      SUPPORT_EMAIL: ${{ vars.SUPPORT_EMAIL }}
+      ANDROID_KEYSTORE_PATH: ${{ github.workspace }}/../denge-upload.jks
+      ANDROID_STORE_PASSWORD: ${{ secrets.ANDROID_STORE_PASSWORD }}
+      ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+      ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Require reviewed exact commit and owner configuration
+        env:
+          REVIEWED_SHA: ${{ inputs.reviewed_sha }}
+          UPLOAD_KEY_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+        run: |
+          test "$REVIEWED_SHA" = "$GITHUB_SHA"
+          test -n "$UPLOAD_KEY_BASE64"
+          test -n "$ANDROID_STORE_PASSWORD"
+          test -n "$ANDROID_KEY_ALIAS"
+          test -n "$ANDROID_KEY_PASSWORD"
+          umask 077
+          printf '%s' "$UPLOAD_KEY_BASE64" | base64 --decode > "$ANDROID_KEYSTORE_PATH"
+          node scripts/release-preflight.js
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - uses: gradle/actions/setup-gradle@v4
+      - run: npm ci
+      - run: npm run check && npm test && npm run audit:levels
+      - run: npm run android:sync
+      - name: Signed upload bundle
+        working-directory: android
+        run: ./gradlew bundleRelease
+      - name: Verify signature and package public outputs only
+        run: |
+          jarsigner -verify android/app/build/outputs/bundle/release/app-release.aab | tee signature-check.txt
+          grep -q 'jar verified' signature-check.txt
+          mkdir play-output
+          cp android/app/build/outputs/bundle/release/app-release.aab play-output/Kus_Koyu_Denge_1.1.0_Play.aab
+          cp dist/privacy.html play-output/privacy.html
+          printf '%s\n' "$GITHUB_SHA" > play-output/COMMIT.txt
+          sha256sum play-output/* > play-output/SHA256SUMS.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: denge-signed-play-bundle
+          path: play-output/
+          retention-days: 30
+      - name: Remove upload key
+        if: always()
+        run: rm -f "$ANDROID_KEYSTORE_PATH"
