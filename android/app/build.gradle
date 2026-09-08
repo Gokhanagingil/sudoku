@@ -39,6 +39,7 @@ android {
     }
     buildTypes {
         debug {
+            applicationIdSuffix '.preview'
             buildConfigField 'String', 'ADMOB_BANNER_ID', quote(sampleBanner)
         }
         release {
