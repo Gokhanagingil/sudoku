@@ -1,0 +1,67 @@
+name: Play Readiness
+on:
+  pull_request:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+concurrency:
+  group: play-readiness-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install playwright==1.57.0
+      - run: python -m playwright install --with-deps chromium
+      - run: python scripts/browser-smoke.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: denge-browser-evidence
+          path: test-output/
+          retention-days: 30
+  android-validation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - uses: gradle/actions/setup-gradle@v4
+      - run: npm ci
+      - run: npm run android:sync
+      - name: Debug APK and explicitly unsigned validation bundle
+        working-directory: android
+        run: ./gradlew assembleDebug bundleRelease lintDebug -PvalidationBuild=true
+      - name: Package evidence (never a production release)
+        run: |
+          mkdir -p validation-artifacts
+          cp android/app/build/outputs/apk/debug/app-debug.apk validation-artifacts/Kus_Koyu_Denge_1.1.0_debug.apk
+          cp android/app/build/outputs/bundle/release/app-release.aab validation-artifacts/Kus_Koyu_Denge_1.1.0_UNSIGNED_TEST_ONLY.aab
+          git archive --format=zip HEAD > validation-artifacts/source.zip
+          printf '%s\n' "$GITHUB_SHA" > validation-artifacts/COMMIT.txt
+          printf '%s\n' 'The AAB is unsigned and uses Google test ad IDs. NOT FOR PLAY UPLOAD.' > validation-artifacts/READ_ME.txt
+          sha256sum validation-artifacts/* > validation-artifacts/SHA256SUMS.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: denge-1.1.0-validation-only
+          path: validation-artifacts/
+          retention-days: 30

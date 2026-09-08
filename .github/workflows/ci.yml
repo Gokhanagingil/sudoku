@@ -1,13 +1,10 @@
 name: Quality Gate
-
 on:
   push:
     branches: [main]
   pull_request:
-
 permissions:
   contents: read
-
 jobs:
   game-quality:
     runs-on: ubuntu-latest
@@ -19,7 +16,24 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      - name: Runtime dependency security gate
+        run: npm audit --omit=dev --audit-level=moderate
+      - name: Record full toolchain advisory inventory
+        run: |
+          if npm audit --json > npm-audit-full.json; then
+            echo 'No full-tree advisories.'
+          else
+            code=$?
+            test "$code" -eq 1
+          fi
+          node -e 'const r=require("./npm-audit-full.json"); if(r.error) throw new Error(JSON.stringify(r.error)); console.log(JSON.stringify(r.vulnerabilities,null,2));'
       - run: npm run check
       - run: npm test
       - run: npm run audit:levels
       - run: npm run build
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: denge-dependency-audit
+          path: npm-audit-full.json
+          retention-days: 30

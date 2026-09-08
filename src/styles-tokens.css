@@ -4,3 +4,19 @@
 .bird-token .token-rank,.shape-token .token-rank { position:absolute; right:1px; bottom:0; min-width:17px; height:17px; border-radius:9px; display:grid; place-items:center; background:rgba(255,253,247,.94); border:1px solid rgba(49,74,58,.18); color:#2f4e3d; font-size:.64rem; font-weight:900; line-height:1; z-index:3; }
 .shape-token { position:relative; width:100%; height:100%; display:grid; place-items:center; font-size:clamp(1.1rem,5vw,2rem); color:#3f6652; font-weight:900; }
 .number-token { font-size:clamp(1.25rem,7vw,2.2rem); font-weight:850; color:#2f5d46; }
+
+/* Optical sizing: vector art fills the tile rather than a font glyph's em box. */
+.shape-token { min-width:0; min-height:0; }
+.shape-art { width:90%; height:90%; fill:currentColor; color:#315d46; }
+.tray-token > .shape-token { max-width:72px; max-height:72px; }
+.shape-token .token-rank { right:-2px; bottom:-2px; background:#fffdf7; }
+.size-9 .shape-token .token-rank { min-width:13px; height:13px; font-size:.5rem; }
+.notes-grid { width:100%; height:100%; grid-auto-rows:1fr; gap:1px; }
+.notes-grid .note-slot { width:100%; height:100%; min-width:0; min-height:0; display:grid; place-items:center; }
+.notes-grid .note-art { width:94%; height:94%; max-width:24px; max-height:24px; color:#526951; }
+.high-contrast .shape-art { color:#102f20; }
+.tool-button.active span { text-decoration:underline; text-underline-offset:3px; }
+.setting-row:focus-within { outline:3px solid #2b6ca5; outline-offset:2px; }
+.storage-notice { padding:10px 16px; background:#fff2cf; color:#583f10; font-size:.9rem; }
+[hidden] { display:none !important; }
+@media (prefers-reduced-motion:reduce) { *,*::before,*::after { animation:none !important; transition:none !important; } }

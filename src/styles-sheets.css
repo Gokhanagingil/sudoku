@@ -35,3 +35,6 @@
 .unlock-banner strong { color:#805d25; }
 .unlock-banner span { font-size:.78rem; line-height:1.4; color:#756443; }
 .text-button { margin-top:12px; min-height:44px; padding:0 18px; color:#52645a; text-decoration:underline; cursor:pointer; }
+
+.settings-copy { font-size:.85rem; line-height:1.5; color:#4c6153; margin:12px 0; }
+a.sheet-row { color:#315a45; text-decoration:none; }
